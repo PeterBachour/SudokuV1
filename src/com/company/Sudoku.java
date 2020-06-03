@@ -7,8 +7,8 @@ public class Sudoku {
     private int initialSudoku[][];
     private int error[][];
     private int n = 9;
+    private int counter = 0;
     private SudokuGenerator sg;
-    private boolean isFixed;
 
     public Sudoku(int level) {
         generateSudoku(level);
@@ -16,22 +16,11 @@ public class Sudoku {
 
     public void generateSudoku(int level){
         sg = new SudokuGenerator(level);
+        counter = sg.getCount();
         sudoku = sg.getSudoku();
         solvedSudoku = sg.getSolvedSudoku();
         initialSudoku = sg.getInitialSudoku();
         error = new int[9][9];
-
-//        sudoku =  new  int[][] {
-//                {3, 0, 6, 5, 0, 8, 4, 0, 0},
-//                {5, 2, 0, 0, 0, 0, 0, 0, 0},
-//                {0, 8, 7, 0, 0, 0, 0, 3, 1},
-//                {0, 0, 3, 0, 1, 0, 0, 8, 0},
-//                {9, 0, 0, 8, 6, 3, 0, 0, 5},
-//                {0, 5, 0, 0, 9, 0, 6, 0, 0},
-//                {1, 3, 0, 0, 0, 0, 2, 5, 0},
-//                {0, 0, 0, 0, 0, 0, 0, 7, 4},
-//                {0, 0, 5, 2, 0, 6, 3, 0, 0}
-//        };
     }
 
     public boolean getInitialValue(int x, int y){
@@ -42,6 +31,9 @@ public class Sudoku {
         sudoku = solvedSudoku;
     }
 
+    public int getCount(){
+        return counter;
+    }
     public int getValue(int x, int y){
         return sudoku[x][y];
     }
@@ -77,14 +69,5 @@ public class Sudoku {
             }
         }
         return true;
-    }
-
-
-    public boolean isFixed() {
-        return isFixed;
-    }
-
-    public void setFixed(boolean fixed) {
-        isFixed = fixed;
     }
 }

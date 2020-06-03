@@ -1,16 +1,10 @@
 package com.company;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.image.ImageObserver;
-import java.text.AttributedCharacterIterator;
-
 import static java.awt.Color.*;
 import static javax.swing.JOptionPane.*;
 
@@ -46,7 +40,7 @@ public class SudokuGUI extends JFrame {
 
     //Draw the Grid
     private void drawGrid(){
-        this.grid = new Grid(sudoku);
+        this.grid = new Grid(sudoku, sudoku.getCount());
         this.add(grid, BorderLayout.CENTER);
     }
 
@@ -89,7 +83,7 @@ public class SudokuGUI extends JFrame {
         this.check.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                checker();
+                grid.checkCount();
             }
         });
 
@@ -194,32 +188,16 @@ public class SudokuGUI extends JFrame {
             if(res == 0) {
                 if(id == 1){
                     sudoku.generateSudoku(level);
-                    grid.setNewGrid();
+                    grid.setNewGrid(sudoku.getCount());
                     repaint();
                 }
                 else if(id == 2){
                     sudoku.solve();
-                    grid.setNewGrid();
+                    grid.setNewGrid(sudoku.getCount());
                     repaint();
                 }
             }
         }
-    }
-
-    public void checker(){
-        if(sudoku.checkIfDone()){
-            String message = "<html>Congratulations!<br/>You resolved this grid in "
-                    + grid.getStep() + " steps.</html>";
-            String title = "Congratulations!";
-            JFrame frame = new JFrame();
-            JOptionPane.showMessageDialog(
-                    frame,
-                    new JLabel(message, null, JLabel.LEFT),
-                    title, JOptionPane.INFORMATION_MESSAGE);
-
-        } else
-            grid.checker(sudoku.checker());
-
     }
 
     public void getHint(){

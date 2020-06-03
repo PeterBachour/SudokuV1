@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
@@ -12,6 +11,7 @@ public class Grid extends JPanel {
 
     int width = 500;
     int height = 500;
+    private int counter = 0;
     private int currentlySelectedCol;
     private int currentlySelectedRow;
     private Sudoku sudoku;
@@ -20,19 +20,21 @@ public class Grid extends JPanel {
     private int step = 0;
 
 
-    public Grid(Sudoku sudoku) {
+    public Grid(Sudoku sudoku, int counter) {
         addMouseListener(new SudokuMouseAdapter());
         currentlySelectedCol = -1;
         currentlySelectedRow = -1;
         error = new int[9][9];
+        this.counter = counter;
         this.sudoku = sudoku;
         this.initialSudoku = sudoku;
     }
 
-    public void setNewGrid() {
+    public void setNewGrid(int counter) {
         currentlySelectedCol = -1;
         currentlySelectedRow = -1;
         error = new int[9][9];
+        this.counter = counter;
         step=0;
     }
 
@@ -88,7 +90,11 @@ public class Grid extends JPanel {
 
         g.setColor(Color.BLACK);
         g.setFont(new Font("Comic Sans Ms", Font.BOLD, 25));
-        g.drawString("Steps: " + step, 0, height+30);
+        if(step != 0)
+            g.drawString("Steps: " + step, 0, height+30);
+        else
+            g.drawString("Steps: - ", 0, height+30);
+
     }
 
     // returns mouse location.
@@ -122,12 +128,16 @@ public class Grid extends JPanel {
         g.drawString(value, x, y);
     }
 
-    public void message(String value){
+    public void message(int value){
         if(currentlySelectedCol != -1 && currentlySelectedRow != -1){
-            sudoku.setValue(currentlySelectedCol, currentlySelectedRow, Integer.parseInt(value));
+            if(error[currentlySelectedCol][currentlySelectedRow] == 0 )
+                counter++;
+            sudoku.setValue(currentlySelectedCol, currentlySelectedRow, value);
             error[currentlySelectedCol][currentlySelectedRow] = 0;
             step++;
             repaint();
+            if(counter == 81)
+                checkCount();
         }
     }
 
@@ -135,32 +145,60 @@ public class Grid extends JPanel {
     public class NumActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            message(((JButton) e.getSource()).getText());
+            message(Integer.parseInt(((JButton) e.getSource()).getText()));
         }
     }
 
     public void checker(int[][] error){
         this.error = error;
-        step++;
+        if(counter != 81)
+            step++;
         repaint();
-    }
-
-    public int getStep(){
-        return step;
     }
 
     public void getHint(){
-        step++;
-        int val = sudoku.getSolvedValue(currentlySelectedCol, currentlySelectedRow);
-        sudoku.setValue(currentlySelectedCol, currentlySelectedRow, val);
-        repaint();
+        if(!sudoku.getInitialValue(currentlySelectedCol,currentlySelectedRow)  &&
+                sudoku.getValue(currentlySelectedCol, currentlySelectedRow) == 0)
+        {
+            step++;
+            if(error[currentlySelectedCol][currentlySelectedRow] == 0 )
+                counter++;
+            int val = sudoku.getSolvedValue(currentlySelectedCol, currentlySelectedRow);
+            sudoku.setValue(currentlySelectedCol, currentlySelectedRow, val);
+            error[currentlySelectedCol][currentlySelectedRow] = 0;
+            repaint();
+            if(counter == 81)
+                checkCount();
+        }
     }
 
     public void clearCase(){
-        step++;
-        sudoku.setValue(currentlySelectedCol, currentlySelectedRow, 0);
-        error[currentlySelectedCol][currentlySelectedRow] = 0;
-        repaint();
-
+        if(!sudoku.getInitialValue(currentlySelectedCol,currentlySelectedRow)  && (
+                sudoku.getValue(currentlySelectedCol, currentlySelectedRow) != 0)||
+                error[currentlySelectedCol][currentlySelectedRow] != 0)  {
+            step++;
+            counter--;
+            sudoku.setValue(currentlySelectedCol, currentlySelectedRow, 0);
+            error[currentlySelectedCol][currentlySelectedRow] = 0;
+            repaint();
+        }
     }
+
+    public void checkCount(){
+            if (sudoku.checkIfDone()) {
+                String message = "<html>Congratulations!<br/>You resolved this grid in "
+                        + step + " steps.</html>";
+                String title = "Congratulations!";
+                JFrame frame = new JFrame();
+                JOptionPane.showMessageDialog(
+                        frame,
+                        new JLabel(message, null, JLabel.LEFT),
+                        title, JOptionPane.INFORMATION_MESSAGE);
+                setNewGrid(0);
+            }
+            else{
+                checker(sudoku.checker());
+            }
+    }
+
 }

@@ -11,7 +11,7 @@ public class SudokuGenerator {
     SudokuGenerator(int level)
     {
         if(level == 1){
-            K=34;
+            K=1;
         }else if(level == 2){
             K=44;
         }else if(level == 3){
@@ -21,6 +21,10 @@ public class SudokuGenerator {
         solvedSudoku = new int[n][n];
         initialSudoku = new int[n][n];
         fillValues();
+    }
+
+    public int getCount(){
+        return 81 - K;
     }
 
     public int[][] getSudoku(){
@@ -47,9 +51,7 @@ public class SudokuGenerator {
     // Fill the diagonal SRN number of SRN x SRN matrices
     void fillDiagonal()
     {
-
         for (int i = 0; i<n; i=i+3)
-
             // for diagonal box, start coordinates->i==j
             fillBox(i, i);
     }
@@ -143,10 +145,7 @@ public class SudokuGenerator {
                 i--;
             }
             int j = cellId%9;
-//            if (j != 0)
-//                j = j - 1;
 
-            // System.out.println(i+" "+j);
             if (sudoku[i][j] != 0)
             {
                 count--;
