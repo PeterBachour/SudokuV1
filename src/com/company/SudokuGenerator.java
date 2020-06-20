@@ -4,14 +4,14 @@ public class SudokuGenerator {
     int[][] sudoku;
     int[][] solvedSudoku;
     int[][] initialSudoku;
-    int n = 9; // number of columns/rows.
-    int K; // No. Of missing digits
+    int n = 9;
+    int K; //le numero de cellule manquante - niveau
 
-    // Constructor
+    // Constructeur
     SudokuGenerator(int level)
     {
         if(level == 1){
-            K=1;
+            K=34;
         }else if(level == 2){
             K=44;
         }else if(level == 3){
@@ -23,40 +23,41 @@ public class SudokuGenerator {
         fillValues();
     }
 
+    // return le nombre de cellule rempli
     public int getCount(){
         return 81 - K;
     }
 
+    // return le sudoku a resoudre
     public int[][] getSudoku(){
         return sudoku;
     }
+    //return le sudoku resolu
     public int[][] getSolvedSudoku(){
         return solvedSudoku;
     }
+    // return le sudoku initale
     public int[][] getInitialSudoku(){ return initialSudoku;}
 
     // Sudoku Generator
     public void fillValues()
     {
-        // Fill the diagonal of 3 x 3 matrices
+        // rempli les diagonal 3x3
         fillDiagonal();
 
-        // Fill remaining blocks
+        // rempli toute la grille
         fillRemaining(0, 3);
 
-        // Remove Randomly K digits to make game
+        // remove des cellule aleatoire
         removeKDigits();
     }
 
-    // Fill the diagonal SRN number of SRN x SRN matrices
     void fillDiagonal()
     {
         for (int i = 0; i<n; i=i+3)
-            // for diagonal box, start coordinates->i==j
             fillBox(i, i);
     }
 
-    // Fill a 3 x 3 matrix.
     void fillBox(int row,int col)
     {
         int num;
@@ -77,11 +78,9 @@ public class SudokuGenerator {
         }
     }
 
-    // A recursive function to fill remaining
-    // matrix
+    //fonction recursive qui rempli la grille
     boolean fillRemaining(int i, int j)
     {
-        //  System.out.println(i+" "+j);
         if (j>=n && i<n-1)
         {
             i = i + 1;
@@ -129,17 +128,13 @@ public class SudokuGenerator {
         return false;
     }
 
-    // Remove the K no. of digits to
-    // complete game
+
     public void removeKDigits()
     {
         int count = K;
         while (count != 0)
         {
             int cellId = randomGenerator(n*n);
-
-            // System.out.println(cellId);
-            // extract coordinates i  and j
             int i = (cellId/n);
             if(i == 9){
                 i--;
@@ -155,13 +150,13 @@ public class SudokuGenerator {
         }
     }
 
-    // Random generator
+    // generateur de numero aleatoire
     int randomGenerator(int num)
     {
         return (int) Math.floor((Math.random()*num+1));
     }
 
-    // Check if safe to put in cell
+    // check si c;est possible de mettre une valeur dans cette cellule
     boolean CheckIfSafe(int i,int j,int num)
     {
         return (unUsedInRow(i, num) &&
@@ -169,7 +164,7 @@ public class SudokuGenerator {
                 unUsedInBox(i-i%3, j-j%3, num));
     }
 
-    // check in the row for existence
+    // check si la valeur est dans la ligne
     boolean unUsedInRow(int i,int num)
     {
         for (int j = 0; j<n; j++)
@@ -178,7 +173,7 @@ public class SudokuGenerator {
         return true;
     }
 
-    // check in the row for existence
+    // check si la valeur est dans la colonne
     boolean unUsedInCol(int j,int num)
     {
         for (int i = 0; i<n; i++)
@@ -187,7 +182,7 @@ public class SudokuGenerator {
         return true;
     }
 
-    // Returns false if given 3 x 3 block contains num.
+    // check si la valeur est dans la matrice 3x3
     boolean unUsedInBox(int rowStart, int colStart, int num)
     {
         for (int i = 0; i<3; i++)

@@ -9,17 +9,18 @@ import javax.swing.event.MouseInputAdapter;
 
 public class Grid extends JPanel {
 
-    int width = 500;
-    int height = 500;
-    private int counter = 0;
+    int width = 500; //taille de l'ecran
+    int height = 500; //taille de l'ecran
+    private int counter = 0; //compteur pour savoir si la grille est rempli
     private int currentlySelectedCol;
     private int currentlySelectedRow;
-    private Sudoku sudoku;
-    private Sudoku initialSudoku;
-    private int[][] error;
-    private int step = 0;
+    private Sudoku sudoku; //sudoku rempli au fur et a mesure
+    private Sudoku initialSudoku; //Sudoku initial
+    private int[][] error; //tableau des erreurs
+    private int step = 0; //nombre de step fais par le joueur
 
 
+    //initialisation de la grille
     public Grid(Sudoku sudoku, int counter) {
         addMouseListener(new SudokuMouseAdapter());
         currentlySelectedCol = -1;
@@ -30,6 +31,7 @@ public class Grid extends JPanel {
         this.initialSudoku = sudoku;
     }
 
+    //creation d'une nouvelle grille
     public void setNewGrid(int counter) {
         currentlySelectedCol = -1;
         currentlySelectedRow = -1;
@@ -38,7 +40,8 @@ public class Grid extends JPanel {
         step=0;
     }
 
-        private void drawGrid(Graphics2D g2){
+    //affichage des lignes de la grille
+    private void drawGrid(Graphics2D g2){
         g2.setBackground(Color.WHITE);
         g2.translate(0,12);
         g2.setStroke(new BasicStroke(3));
@@ -59,7 +62,7 @@ public class Grid extends JPanel {
         }
     }
 
-    //  Paints the 9x9 grid.
+    //  affichage de la grille avec les valeurs + le nombre de step
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
@@ -97,7 +100,7 @@ public class Grid extends JPanel {
 
     }
 
-    // returns mouse location.
+    // return l'endroit ou le joueur a clicker
     private class SudokuMouseAdapter extends MouseInputAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -118,7 +121,7 @@ public class Grid extends JPanel {
         }
     }
 
-    // Draws value in the center of the cell.
+    // affiche la valeur au milieu de la cellule de la grille
     private void drawCenteredString(Graphics g, String value, Rectangle rect, Font font, Color color) {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(value)) / 2;
@@ -128,6 +131,7 @@ public class Grid extends JPanel {
         g.drawString(value, x, y);
     }
 
+    // ajoute la nouvelle valeur a la grille
     public void message(int value){
         if(currentlySelectedCol != -1 && currentlySelectedRow != -1){
             if(error[currentlySelectedCol][currentlySelectedRow] == 0 )
@@ -136,12 +140,13 @@ public class Grid extends JPanel {
             error[currentlySelectedCol][currentlySelectedRow] = 0;
             step++;
             repaint();
+            //si le nombre total de cellule rempli = 81, on check si le joueur a gagner
             if(counter == 81)
                 checkCount();
         }
     }
 
-    // Returns the value chosen from the buttons 1-9.
+    // return la valeur choisi par le joueur
     public class NumActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -149,6 +154,7 @@ public class Grid extends JPanel {
         }
     }
 
+    // montre les valeurs fausse de la grille
     public void checker(int[][] error){
         this.error = error;
         if(counter != 81)
@@ -156,6 +162,7 @@ public class Grid extends JPanel {
         repaint();
     }
 
+    // retourne un hint au joueur
     public void getHint(){
         if(!sudoku.getInitialValue(currentlySelectedCol,currentlySelectedRow)  &&
                 sudoku.getValue(currentlySelectedCol, currentlySelectedRow) == 0)
@@ -172,6 +179,7 @@ public class Grid extends JPanel {
         }
     }
 
+    // vide la case
     public void clearCase(){
         if(!sudoku.getInitialValue(currentlySelectedCol,currentlySelectedRow)  && (
                 sudoku.getValue(currentlySelectedCol, currentlySelectedRow) != 0)||
@@ -184,6 +192,7 @@ public class Grid extends JPanel {
         }
     }
 
+    // check si le joueur a gagner
     public void checkCount(){
             if (sudoku.checkIfDone()) {
                 String message = "<html>Congratulations!<br/>You resolved this grid in "

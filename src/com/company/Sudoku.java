@@ -14,6 +14,7 @@ public class Sudoku {
         generateSudoku(level);
     }
 
+    // initialisation de la grille avec le niveau choisi
     public void generateSudoku(int level){
         sg = new SudokuGenerator(level);
         counter = sg.getCount();
@@ -23,30 +24,38 @@ public class Sudoku {
         error = new int[9][9];
     }
 
+    //retourne la valeur initiale du sudoku
     public boolean getInitialValue(int x, int y){
         return initialSudoku[x][y] != 0;
     }
 
+    // resouds la grille
     public void solve() {
         sudoku = solvedSudoku;
     }
 
+    //retourne le nombre de valeur rempli dans la grille
     public int getCount(){
         return counter;
     }
+
+    // retourne la valeur d'une cellule choisi
     public int getValue(int x, int y){
         return sudoku[x][y];
     }
 
+    // retourne la valeur resolu d'une cellule choisi
     public int getSolvedValue(int x, int y){
         return solvedSudoku[x][y];
     }
 
+    // set une valeur a une cellule choisi
     public int[][] setValue(int x, int y, int value) {
         sudoku[x][y] = value;
         return sudoku;
     }
 
+    // return les erreurs de la grille
     public int[][] checker(){
         for(int i =0; i < 9 ; i++){
             for(int j =0; j < 9 ; j++) {
@@ -60,6 +69,8 @@ public class Sudoku {
         }
         return error;
     }
+
+    //check si la grille est identique a la grille resolu
     public boolean checkIfDone(){
         for(int i =0; i < 9 ; i++){
             for(int j =0; j < 9 ; j++) {

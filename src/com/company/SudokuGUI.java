@@ -200,10 +200,12 @@ public class SudokuGUI extends JFrame {
         }
     }
 
+    // Returns a Hint
     public void getHint(){
         grid.getHint();
     }
 
+    // Clear a case (cellule)
     public void clearCase() {
         grid.clearCase();
     }
